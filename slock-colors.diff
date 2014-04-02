@@ -1,0 +1,32 @@
+--- slock/config.mk	2014-04-02 12:01:19.540006339 +0200
++++ slock/config.mk	2014-04-02 12:02:46.280006413 +0200
+@@ -14,7 +14,7 @@
+ LIBS = -L/usr/lib -lc -lcrypt -L${X11LIB} -lX11 -lXext
+ 
+ # flags
+-CPPFLAGS = -DVERSION=\"${VERSION}\" -DHAVE_SHADOW_H -DCOLOR1=\"black\" -DCOLOR2=\"\#005577\"
++CPPFLAGS = -DVERSION=\"${VERSION}\" -DHAVE_SHADOW_H -DCOLOR1=\"\#FF0000\" -DCOLOR2=\"\#FFFF00\"
+ CFLAGS = -std=c99 -pedantic -Wall -Os ${INCS} ${CPPFLAGS}
+ LDFLAGS = -s ${LIBS}
+ 
+--- slock/slock.c	2014-04-02 12:01:19.540006339 +0200
++++ slock/slock.c	2014-04-02 12:04:35.390006503 +0200
+@@ -192,6 +192,7 @@
+ 	XColor color, dummy;
+ 	XSetWindowAttributes wa;
+ 	Cursor invisible;
++    XColor xcbackground;
+ 
+ 	if(dpy == NULL || screen < 0)
+ 		return NULL;
+@@ -206,7 +207,9 @@
+ 
+ 	/* init */
+ 	wa.override_redirect = 1;
+-	wa.background_pixel = BlackPixel(dpy, lock->screen);
++    XAllocNamedColor(dpy, DefaultColormap(dpy, lock->screen), COLOR1, &xcbackground, &dummy);
++	wa.background_pixel = xcbackground.pixel;
++
+ 	lock->win = XCreateWindow(dpy, lock->root, 0, 0, DisplayWidth(dpy, lock->screen), DisplayHeight(dpy, lock->screen),
+ 			0, DefaultDepth(dpy, lock->screen), CopyFromParent,
+ 			DefaultVisual(dpy, lock->screen), CWOverrideRedirect | CWBackPixel, &wa);
